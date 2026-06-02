@@ -1,0 +1,240 @@
+{
+  "agentspec_version": "26.1.0",
+  "component_type": "Flow",
+  "id": "agent-security-reviewer-flow",
+  "name": "Agent Security Reviewer",
+  "description": "Advisory security-review helper for /chat agent authoring. Surfaces fuzzy risks (prompt injection in system fields, scope-bypass via missing actor envelope threading, over-broad MCPToolBox permissions, leaked PII) beyond the deterministic lint. Architecture: docs/developer/chat-agent-authoring-review.md.",
+  "metadata": {
+    "cinatra": {
+      "type": "node",
+      "packageName": "@cinatra-ai/security-reviewer-agent",
+      "packageVersion": "0.1.3"
+    }
+  },
+  "inputs": [
+    {
+      "title": "agent_run_id",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "title": "oasJson",
+      "type": "string"
+    },
+    {
+      "title": "packageSlug",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "title": "reviewContext",
+      "type": "string",
+      "default": "{}"
+    }
+  ],
+  "outputs": [
+    {
+      "title": "findings",
+      "type": "string"
+    }
+  ],
+  "start_node": {
+    "$component_ref": "start"
+  },
+  "nodes": [
+    {
+      "$component_ref": "start"
+    },
+    {
+      "$component_ref": "review"
+    },
+    {
+      "$component_ref": "end"
+    }
+  ],
+  "control_flow_connections": [
+    {
+      "component_type": "ControlFlowEdge",
+      "name": "start_to_review",
+      "from_node": {
+        "$component_ref": "start"
+      },
+      "to_node": {
+        "$component_ref": "review"
+      }
+    },
+    {
+      "component_type": "ControlFlowEdge",
+      "name": "review_to_end",
+      "from_node": {
+        "$component_ref": "review"
+      },
+      "to_node": {
+        "$component_ref": "end"
+      }
+    }
+  ],
+  "data_flow_connections": [
+    {
+      "component_type": "DataFlowEdge",
+      "name": "start_to_review_agent_run_id",
+      "source_node": {
+        "$component_ref": "start"
+      },
+      "source_output": "agent_run_id",
+      "destination_node": {
+        "$component_ref": "review"
+      },
+      "destination_input": "agent_run_id"
+    },
+    {
+      "component_type": "DataFlowEdge",
+      "name": "start_to_review_oasJson",
+      "source_node": {
+        "$component_ref": "start"
+      },
+      "source_output": "oasJson",
+      "destination_node": {
+        "$component_ref": "review"
+      },
+      "destination_input": "oasJson"
+    },
+    {
+      "component_type": "DataFlowEdge",
+      "name": "start_to_review_packageSlug",
+      "source_node": {
+        "$component_ref": "start"
+      },
+      "source_output": "packageSlug",
+      "destination_node": {
+        "$component_ref": "review"
+      },
+      "destination_input": "packageSlug"
+    },
+    {
+      "component_type": "DataFlowEdge",
+      "name": "start_to_review_reviewContext",
+      "source_node": {
+        "$component_ref": "start"
+      },
+      "source_output": "reviewContext",
+      "destination_node": {
+        "$component_ref": "review"
+      },
+      "destination_input": "reviewContext"
+    },
+    {
+      "component_type": "DataFlowEdge",
+      "name": "review_to_end_findings",
+      "source_node": {
+        "$component_ref": "review"
+      },
+      "source_output": "findings",
+      "destination_node": {
+        "$component_ref": "end"
+      },
+      "destination_input": "findings"
+    }
+  ],
+  "$referenced_components": {
+    "start": {
+      "component_type": "StartNode",
+      "id": "start",
+      "name": "Inputs",
+      "metadata": {
+        "cinatra": {
+          "required": [
+            "oasJson"
+          ],
+          "hidden": [
+            "agent_run_id",
+            "packageSlug",
+            "reviewContext"
+          ]
+        }
+      },
+      "inputs": [
+        {
+          "title": "agent_run_id",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "title": "oasJson",
+          "type": "string"
+        },
+        {
+          "title": "packageSlug",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "title": "reviewContext",
+          "type": "string",
+          "default": "{}"
+        }
+      ]
+    },
+    "review": {
+      "component_type": "ApiNode",
+      "id": "review",
+      "name": "Run advisory security review",
+      "url": "{{CINATRA_BASE_URL}}/api/llm-bridge",
+      "http_method": "POST",
+      "data": {
+        "system": "You are the security-reviewer-agent for Cinatra OAS Flow 26.1.0. Follow the security-review methodology delivered via the security-review-methodology skill. Emit {\"findings\":[…]} ONLY — wrap-object required (DataFlowEdge extracts `findings`).",
+        "user": "Review the following OAS Flow 26.1.0 agent definition for fuzzy security risks beyond the deterministic lint and emit a JSON object {\"findings\":[...]} containing ReviewFinding objects.\n\npackageSlug: {{ packageSlug }}\n\nreviewContext: {{ reviewContext }}\n\noasJson:\n{{ oasJson }}",
+        "agent_id": "security-reviewer-agent",
+        "agent_run_id": "{{ agent_run_id }}",
+        "cinatra_llm": {
+          "preferredProvider": "openai",
+          "preferredModel": "gpt-5.5"
+        }
+      },
+      "inputs": [
+        {
+          "title": "agent_run_id",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "title": "oasJson",
+          "type": "string"
+        },
+        {
+          "title": "packageSlug",
+          "type": "string",
+          "default": ""
+        },
+        {
+          "title": "reviewContext",
+          "type": "string",
+          "default": "{}"
+        }
+      ],
+      "outputs": [
+        {
+          "title": "findings",
+          "type": "string"
+        }
+      ],
+      "metadata": {
+        "cinatra": {
+          "riskClass": "read_only",
+          "requiresApproval": false
+        }
+      }
+    },
+    "end": {
+      "component_type": "EndNode",
+      "id": "end",
+      "name": "End",
+      "outputs": [
+        {
+          "title": "findings",
+          "type": "string"
+        }
+      ]
+    }
+  }
+}
