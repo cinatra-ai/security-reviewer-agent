@@ -1,6 +1,6 @@
 {
   "name": "@cinatra-ai/security-reviewer-agent",
-  "version": "0.1.3",
+  "version": "0.1.0",
   "license": "Apache-2.0",
   "description": "Advisory security-review helper for /chat agent authoring; surfaces fuzzy risks (prompt injection, scope-bypass, over-broad toolboxes, missing input validation) beyond the deterministic lint. See docs/developer/chat-agent-authoring-review.md.",
   "type": "module",
