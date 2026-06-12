@@ -11,6 +11,9 @@
   "cinatra": {
     "apiVersion": "cinatra.ai/v1",
     "kind": "agent",
-    "dependencies": []
+    "dependencies": [],
+    "roles": [
+      "agent-security-reviewer"
+    ]
   }
 }
