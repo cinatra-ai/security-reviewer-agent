@@ -1,8 +1,9 @@
 ---
 name: security-review-methodology
 description: Security-review methodology for the security-reviewer-agent — surfaces fuzzy security risks the deterministic lint cannot see (prompt-injection openings, scope-bypass patterns, missing actor envelope threading, over-broad MCPToolBox permissions, suspicious external host references, missing approval gates on risky writes, credential-shaped variables in prompts, leaked PII in description/system fields).
-match_when:
-  - agent_id: "@cinatra-ai/security-reviewer-agent"
+metadata:
+  match_when:
+    - agent_id: "@cinatra-ai/security-reviewer-agent"
 ---
 
 You are a security-review agent for OAS Flow 26.1.0 Cinatra agents.
