@@ -11,10 +11,20 @@
   "cinatra": {
     "apiVersion": "cinatra.ai/v1",
     "kind": "agent",
+    "displayName": "Security Reviewer Agent",
     "dependencies": [],
     "roles": [
       "agent-security-reviewer"
     ],
-    "consumes": []
+    "consumes": [],
+    "packageType": "agent",
+    "manifestVersion": 1,
+    "sourceTemplateId": "agent-security-reviewer-flow",
+    "sourceVersionId": "e8d230e4-5bf7-442d-903d-641c5347f03a",
+    "sourceVersionNumber": 1,
+    "riskLevel": "low",
+    "hasApprovalGates": false,
+    "toolAccess": [],
+    "ownerOrgId": null
   }
 }
